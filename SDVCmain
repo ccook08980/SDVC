@@ -1,0 +1,252 @@
+#Id 0 First Name 1	Middle Name 2	Last Name 3	Card Number 4	Card Format 5	Select Type 6	Access Level 7	Phone Number 8	Phone(ext) 9	Cell Phone 10	E-mail 11	Threat Level 12	UserDefine1 13	UserDefine2 14	UserDefine3 15	UserDefine4 16	UserDefine5 17	UserDefine6 18	UserDefine7 19	UserDefine8 20	UserDefine9 21	UserDefine10 22	UserDefine11 23	UserDefine12 24	UserDefine13 25	UserDefine14 26	UserDefine15 27	UserDefine16 28	UserDefine17 29	UserDefine18 30	UserDefine19 31	UserDefine20 32	Activation Date 33	Expiration Date 34	Never Expired 35	Card Type 36	Card Status 37	Key  Number 38	 Resident Type 39	 CallRollThrough 40	 MainResident ID 41	Ada	42 WEBLevel 43	Exempt 44	Disturb 45	VacationMode 46	VacationStart 47	VacationEnd 48	VacationPhone 49	 Directory Listed 50	 Directory Code 51	 Entry Code 52	 Entry Code Type 53	 EntryCode access level 54
+
+
+
+#"ID; 0,First Name; 1,Middle Name; 2,Last Name; 3,Card Number; 4,Card Format; 5,Select Type; 6,Access Level; 7,Phone Number; 8,Phone(ext); 9,Cell Phone; 10,E-mail; 11,Threat Level; 12,UserDefine1; 13,UserDefine2; 14,UserDefine3; 15,UserDefine4; 16,UserDefine5; 17,UserDefine6; 18,UserDefine7; 19,UserDefine8; 20,UserDefine9; 21,UserDefine10; 22,UserDefine11; 23,UserDefine12; 24,UserDefine13; 25,UserDefine14; 26,UserDefine15; 27,UserDefine16; 28,UserDefine17; 29,UserDefine18; 30,UserDefine19; 31,UserDefine20; 32,Activation Date; 33,Expiration Date; 34,Never Expired; 35"
+
+
+
+
+
+
+
+
+
+
+#import numpy
+
+NewArr = [['ID','First Name','Middle Name','Last Name','Card Number','Card Format','Select Type','Access Level','Phone Number','Phone(ext)','Cell Phone','E-mail','Threat Level','UserDefine1','UserDefine2','UserDefine3','UserDefine4','UserDefine5','UserDefine6','UserDefine7','UserDefine8','UserDefine9','UserDefine10','UserDefine11','UserDefine12','UserDefine13','UserDefine14','UserDefine15','UserDefine16','UserDefine17','UserDefine18','UserDefine19','UserDefine20','Activation Date','Expiration Date','Never Expired'],
+     [4,'Donahue','','Marie',35386,'IEI 26 Bit Wiegand','I','Parking Lot Entry Gate','4h56','','','','LOW','','','','','','','','','','','','','','','','','','','','','','',1],
+     [5,'Kidman','','Lani',35387,'IEI 26 Bit Wiegand','I','Parking Lot Entry Gate','','','','','LOW','','','','','','','','','','','','','','','','','','','','','','',1],
+     [6,'Lule','@','Marth',35388,'IEI 26 Bit Wiegand','I','Parking Lot Entry Gate','','','','','LOW','','','','','','','','','','','','','','','','','','','','','','',1],
+     [4,'Nie#lson','','Richard',16777214,'IEI 26 Bit Wiegand','I','Parking Lot Entry Gate','454g554','','','','LOW','','','','','','','','','','','','','','','','','','','','','','','']]
+
+
+
+import csv
+#define all disallowed characters to be cross referenced to during data check
+specialchars = "~!@#$%^&*()_{}|[]\;\'\",./<>?:/-`"
+#parse through all letters in a passed variable looking for special characters, break if and when found
+def specialcharcheck(var2):
+    for var3 in var2:
+    #var 3 being the individual character in the array item var2    
+        for chars in specialchars:
+        #loop as many times as there are special characters
+            if var3 == chars:
+            #if the individual character matches an entry in specialchars
+                print("Invalid Character Detected In Name Field")
+                errorlocation(i,j,var2);
+                break
+#parse through all numbers in passed variable looking for letters or special characters other than -, break if and when found 
+def checkfornonnumbersorhyphens(var2):
+    for var3 in var2:
+    #var 3 being the individual character in the array item var2    
+        try:
+            #try to turn string into an integer
+            int(var3)
+        #if character is not a number, catch the exception
+        except:
+            #if character is a - ignore it, move on to next character
+            if var3 == '-':
+                continue
+            #if character is a letter or special character other than -
+            else:
+                s = var3
+                print("Invalid Character Detected In Phone Field: %r" %s)
+                errorlocation(i,j,var2);
+                break
+            
+def checkforbinary(var2):
+    if var2 != 1 and var2 != 0:
+        print("Entry must be either 1 or 0")
+        errorlocation(i,j,var2);    
+#pass along row i and col j, along with the array item var2
+def errorlocation(i,j,var2):
+  q = var2
+  #increment by 1 to make human interpretation easier
+  w = j+1
+  #example output: Error: Invalid Entry in Row 4 Col 2; ('Nie#lson')
+  print("Error: Invalid Entry in Row", i, "Col", "%r;" %w,"(%r)\n"%q)
+#slightly different function to give seperate error message  
+def notanumber(var2):
+    print("Entry Not A Number")
+    errorlocation(i,j,var2);
+  
+
+
+expiredate = False
+activedate = False
+vacexpiredate = False
+vacactivedate = False
+i = 0
+
+
+def valuecheck(NewArr):
+    for var in NewArr:
+        j = 0
+        for var2 in var:
+            #skip first row, may need to take out if skiprows makes it obsolete
+            if i == 0:
+                continue
+            #check 1st column to see if there are any special characters; see specialcharcheck above
+            if j == 1:
+                specialcharcheck(var2);
+            #check 2nd column to see if there are any special characters; see specialcharcheck above
+            if j == 2:
+                specialcharcheck(var2);
+            #check 3rd column to see if there are any special characters; see specialcharcheck above
+            if j == 3:
+                specialcharcheck(var2);
+            #check 4th column to see if card number is greater than the highest possible card number
+            if j == 4: 
+                try:
+                    if var2 < 0 or var2 > 16777214:
+                        print("Number greater than alloted for card numbers;")
+                        errorlocation(i,j,var2);
+                except:
+                    #if for some reason the col is not a number, to avoid crashing
+                    notanumber(var2);
+            #check 6th column to see if type is individual "I" or group "G"
+            if j == 6:
+                if var2 != "I" and var2 != "G":
+                    print("Entry must be 'I' or 'G'")
+                    errorlocation(i,j,var2);
+            #check 8th column to see if there are any characters besides numbers or -, if empty it will ignore
+            if j == 8:
+                if isinstance(var2, int) == False and var2 != '':
+                    checkfornonnumbersorhyphens(var2);
+            #check 9th column to see if there are any characters besides numbers or -, if empty it will ignore        
+            if j == 9:
+                if isinstance(var2, int) == False and var2 != '':
+                    checkfornonnumbersorhyphens(var2);                
+            #check 10th column to see if there are any characters besides numbers or -, if empty it will ignore
+            if j == 10:
+                if isinstance(var2, int) == False and var2 != '':
+                    checkfornonnumbersorhyphens(var2);
+            #check 12th column to see if threat level entry is empty
+            if j == 12:
+                if var2 == '':
+                    print("Entry Required")
+                    errorlocation(i,j,var2);
+            #check 33rd for activation date to see if empty
+            if j == 33:
+                if var2 != '':
+                    activedate = True
+            #check 34th for expiration date to see if empty
+            if j == 34:
+                if var2 != '':
+                    expiredate = True
+            #check 35 to see if entry is 1 or 0, if 0, check to make sure activation/expiration is filled
+            if j == 35:
+                if var2 != 1 and var2 != 0:
+                    if expiredate == True and activedate == True:
+                            print("Entry must be either 1 or 0")
+                            errorlocation(i,j,var2);
+                    elif expiredate == False and activedate == False:
+                        print("Entry Required for Activation and Expiration date or Col 35 must be 1")
+                        errorlocation(i,j-1,var2);
+                    elif expiredate == True:
+                        print("Entry For Activation Date Required")
+                        errorlocation(i,j,var2);
+                    else:
+                        print("Entry For Expiration Date Required")
+                        errorlocation(i,j,var2);
+            #check 36th to see if card type is above or below 8 and 0 respecively        
+            if j == 36:
+                if var2 >= 8 and var2 <= 0:
+                    print("Entry must be between 0 and 8")
+                    errorlocation(i,j,var2);
+            #check 37th to see if card status is above or below 3 and 0 respectively        
+            if j == 37:
+                if var2 >= 3 and var2 <= 0:
+                    print("Entry must be between 0 and 3")
+                    errorlocation(i,j,var2);        
+            #check to see key number is an integer or blank
+            if j == 38:
+                if var2 == '':
+                    continue
+                try:
+                #try to turn string into an integer
+                    int(var2)
+                #if character is not a number, catch the exception
+                except:
+                    #if for some reason the col is not a number, to avoid crashing
+                    notanumber(var2);
+            #check to see if resident type = is M
+            if j == 39:
+                if var2 != "M":
+                    print("Entry must be M")
+                    errorlocation(i,j,var2);
+            #CHECK 42,44, 45,
+            if j == 42 or j == 44 or j == 45:
+                checkforbinary(var2);
+            #check vacation active/expire (47,48) before vacation mode on/off
+            if j == 47:
+                if var2 != '':
+                    vacactivedate = True
+            if j == 48:
+                if var2 != '':
+                    vacexpiredate = True
+            #check to see if entry is blank or 1
+            if j == 46:
+                if var2 != 1 and var2 != 0:
+                    if vacexpiredate == True and vacactivedate == True:
+                            print("Entry must be either 1 or 0")
+                            errorlocation(i,j,var2);
+                    elif vacexpiredate == False and vacactivedate == False:
+                        print("Entry Required for Vacation Activation and Expiration date or Col 46 must be 0")
+                        errorlocation(i,j,var2);
+                    elif vacexpiredate == True:
+                        print("Entry For Vacation Activation Date Required")
+                        errorlocation(i,j,var2);
+                    else:
+                        print("Entry For Vacation Expiration Date Required")
+                        errorlocation(i,j,var2);
+            #directory listed blank or 1 only
+            if j == 50:
+                if var2 != 1 and var2 != '':
+                    print("Entry must be either 1 or blank")
+                    errorlocation(i,j,var2);
+            #directory code, must be blank or a number
+            if j == 51:
+                if var2 == '':
+                    continue
+                try:
+                #try to turn string into an integer
+                    int(var2)
+                #if character is not a number, catch the exception
+                except:
+                    #if for some reason the col is not a number, to avoid crashing
+                    notanumber(var2);
+            #entry code must be blank or a number greater than 2 digits and less than 8 digits
+            if j == 52:
+                if var2 == '':
+                    continue
+                try:
+                #try to turn string into an integer
+                    int(var2)
+                    if var2 > 9999999:
+                        print("Entry cannot be larger than 7 digits")
+                        errorlocation(i,j,var2);
+                    elif var2 < 10:
+                        print("Entry must be larger than 2 digits")
+                        errorlocation(i,j,var2);
+                #if character is not a number, catch the exception
+                except:
+                    #if for some reason the col is not a number, to avoid crashing
+                    if var2 == '':
+                        continue
+                    else:
+                        notanumber(var2);
+            #entry code type, must be an I, possibly could be G on older firmware
+            if j == 53:
+                if var2 != "I" and var2 != "G":
+                    print("Entry must be 'I' or 'G'")
+                    errorlocation(i,j,var2);
+            #increment overall column counter
+            j += 1
+        #increment overall row counter
+        i += 1
+        
+
+fname = input("Please enter the EXACT name of the csv file to be read e.g examplecsv.csv\n")
